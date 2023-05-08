@@ -5,6 +5,8 @@ import com.greatlearning.ems.model.EmployeeRequest;
 import com.greatlearning.ems.model.EmployeeResponse;
 import com.greatlearning.ems.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,27 +18,27 @@ public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
     @GetMapping("/employees")
-    public List<EmployeeResponse> getEmployees(){
-        return employeeService.getAllEmployees();
+    public ResponseEntity<List<EmployeeResponse>> getEmployees(){
+
+        return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
     }
     @GetMapping("/employee/{id}")
-    public EmployeeResponse getEmployeeById(@PathVariable long id){
-        return employeeService.getEmployeeById(id);
+    public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable long id){
+        return new ResponseEntity<>(employeeService.getEmployeeById(id), HttpStatus.OK);
     }
 
     @PostMapping("/employee")
-    public EmployeeResponse saveEmployee(@RequestBody EmployeeRequest request){
-        request.getId();
-        return employeeService.saveEmployee(request);
+    public ResponseEntity<EmployeeResponse> saveEmployee(@RequestBody EmployeeRequest request){
+        return  new ResponseEntity<>(employeeService.saveEmployee(request),HttpStatus.CREATED);
     }
     @PutMapping("/employee")
-    public EmployeeResponse editEmployee(@RequestBody EmployeeRequest request){
-        return employeeService.updateEmployee(request);
+    public ResponseEntity<EmployeeResponse> editEmployee(@RequestBody EmployeeRequest request){
+        return new ResponseEntity<>(employeeService.updateEmployee(request),HttpStatus.NO_CONTENT);
     }
     @DeleteMapping("/employee/{id}")
-    public EmployeeResponse deleteEmployee(@PathVariable long id){
+    public ResponseEntity<EmployeeResponse> deleteEmployee(@PathVariable long id){
         employeeService.deleteEmployeeById(id);
-        return  EmployeeResponse.builder().id(id).build();
+        return new ResponseEntity<>(EmployeeResponse.builder().id(id).build(),HttpStatus.OK);
     }
 
 }
