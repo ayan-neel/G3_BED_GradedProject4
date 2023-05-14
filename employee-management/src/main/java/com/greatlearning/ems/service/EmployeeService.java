@@ -9,9 +9,11 @@ import java.util.List;
 public interface EmployeeService {
 
     EmployeeResponse getEmployeeById(long id);
-    List<EmployeeResponse>getAllEmployees();
+    List<EmployeeResponse>getAllEmployees(String sort);
     EmployeeResponse saveEmployee(EmployeeRequest request);
     EmployeeResponse updateEmployee(EmployeeRequest request);
     void deleteEmployeeById(long id);
+
+    List<EmployeeResponse> getEmployeesByFirstName(String firstName);
 
 }

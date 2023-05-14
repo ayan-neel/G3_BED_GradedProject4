@@ -6,7 +6,9 @@ import com.greatlearning.ems.model.EmployeeRequest;
 import com.greatlearning.ems.model.EmployeeResponse;
 import com.greatlearning.ems.repository.EmployeeRepository;
 import com.greatlearning.ems.service.EmployeeService;
+import com.mysql.cj.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,10 +28,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeResponse> getAllEmployees() {
+    public List<EmployeeResponse> getAllEmployees(String sort) {
+        if(StringUtils.isNullOrEmpty(sort)) {
+            return employeeRepository.findAll().stream()
+                    .map(EmployeeMapper.INSTANCE::employeeToEmployeeResponse).collect(Collectors.toList());
+        }
+       else if(sort.equalsIgnoreCase("desc"))
+            return employeeRepository.findAll(Sort.by(Sort.Direction.DESC,"firstName")).stream()
+                    .map(EmployeeMapper.INSTANCE::employeeToEmployeeResponse).collect(Collectors.toList());
+       else if(sort.equalsIgnoreCase("asc"))
+           return employeeRepository.findAll(Sort.by(Sort.Direction.ASC,"firstName")).stream()
+                   .map(EmployeeMapper.INSTANCE::employeeToEmployeeResponse).collect(Collectors.toList());
 
-        return employeeRepository.findAll().stream()
-                .map(i->EmployeeMapper.INSTANCE.employeeToEmployeeResponse(i)).collect(Collectors.toList());
+       else {
+            throw new RuntimeException("invalid sort parameter");
+        }
     }
 
     @Override
@@ -49,5 +62,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void deleteEmployeeById(long id) {
         employeeRepository.deleteById(id);
 
+    }
+
+    @Override
+    public List<EmployeeResponse> getEmployeesByFirstName(String firstName) {
+        return employeeRepository.findEmployeeByFirstName(firstName).get().stream()
+                .map(EmployeeMapper.INSTANCE::employeeToEmployeeResponse).collect(Collectors.toList());
     }
 }

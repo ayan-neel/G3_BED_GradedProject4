@@ -18,13 +18,19 @@ public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
     @GetMapping("/employees")
-    public ResponseEntity<List<EmployeeResponse>> getEmployees(){
+    public ResponseEntity<List<EmployeeResponse>> getEmployees(@RequestParam(name="sort", required = false)String sort){
 
-        return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
+        return new ResponseEntity<>(employeeService.getAllEmployees(sort), HttpStatus.OK);
     }
     @GetMapping("/employee/{id}")
     public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable long id){
         return new ResponseEntity<>(employeeService.getEmployeeById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/employee")
+    public ResponseEntity<List<EmployeeResponse>> getEmployeeByFirstName(@RequestParam(name="firstName", required = true,defaultValue = "name")String firstName)
+    {
+        return new ResponseEntity<>(employeeService.getEmployeesByFirstName(firstName),HttpStatus.OK);
     }
 
     @PostMapping("/employee")
